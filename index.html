@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>hello-fullstack</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      gap: 1rem;
+    }
+    h1 {
+      font-size: 3.5rem;
+      margin: 0;
+    }
+    #timestamp {
+      color: #666;
+      font-variant-numeric: tabular-nums;
+    }
+    button {
+      font-size: 1rem;
+      padding: 0.5rem 1.5rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="message">…</h1>
+  <p id="timestamp"></p>
+  <button id="refresh">Refresh</button>
+
+  <script>
+    const isLocal = ["localhost", "127.0.0.1"].includes(location.hostname);
+    const API_BASE = isLocal
+      ? "http://localhost:8000"
+      : "https://<your-app>.onrender.com";
+
+    async function load() {
+      const messageEl = document.getElementById("message");
+      const timestampEl = document.getElementById("timestamp");
+      try {
+        const res = await fetch(API_BASE + "/api/hello");
+        const data = await res.json();
+        messageEl.textContent = data.message;
+        timestampEl.textContent = data.timestamp;
+      } catch (err) {
+        messageEl.textContent = "Failed to reach API";
+        timestampEl.textContent = String(err);
+      }
+    }
+
+    document.getElementById("refresh").addEventListener("click", load);
+    load();
+  </script>
+</body>
+</html>
